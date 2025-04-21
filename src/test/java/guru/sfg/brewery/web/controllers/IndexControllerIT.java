@@ -21,24 +21,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
-public class BeerControllerIT extends BaseIT {
-
-    @WithMockUser("spring")
-    // adds an authenticated user to spring context, this tests is not testing authentication but the security logic
-    @Test
-    void findBeers() throws Exception {
-        mockMvc.perform(get("/beers/find"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("beers/findBeers"))
-                .andExpect(model().attributeExists("beer"));
-    }
+public class IndexControllerIT extends BaseIT {
 
     @Test
-    void findBeersWithHttpBasic() throws Exception {
-        mockMvc.perform(get("/beers/find").with(httpBasic("spring", "guru"))) // Performs authentication, tests the Authentication and security logic
-                .andExpect(status().isOk())
-                .andExpect(view().name("beers/findBeers"))
-                .andExpect(model().attributeExists("beer"));
+    void testGetIndexSlash() throws Exception {
+        // The root of tha application should not require authentication, see the SecurityConfig
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk());
     }
 
 }
