@@ -21,7 +21,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                      */
                     .antMatchers("/beers*", "/beers/find").permitAll()
                     // Limit a Path by HTTP Method and Path
-                    .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll();
+                    .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
+                    // MVC Matchers allow the usage of path variables rather than using antMatcher and wildcards
+                    .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
         }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
     }
 }

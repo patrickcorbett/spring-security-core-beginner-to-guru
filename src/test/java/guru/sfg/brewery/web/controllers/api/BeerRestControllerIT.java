@@ -21,5 +21,11 @@ public class BeerRestControllerIT extends BaseIT {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/beer/ab73d1de-cbce-4ff2-9406-eabe2cf878a9")).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @Test
+    void findBeerByUpc() throws Exception {
+        // GET Operations should not require authentication, see the SecurityConfig
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/beerUpc/0631234200036")).andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
 
 }
