@@ -1,6 +1,7 @@
 package guru.sfg.brewery.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,7 +19,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                      * "/api/v1/user/*" - will match any value, up to another "/"
                      * "/api/v1/user/**" - will match all values beginning with start of string (including if another "/" is found.
                      */
-                    .antMatchers("/beers*", "/beers/find").permitAll();
+                    .antMatchers("/beers*", "/beers/find").permitAll()
+                    // Limit a Path by HTTP Method and Path
+                    .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll();
         }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
     }
 }

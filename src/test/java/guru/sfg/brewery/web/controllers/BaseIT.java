@@ -27,7 +27,7 @@ public class BaseIT {
     @Autowired
     WebApplicationContext wac;
 
-    MockMvc mockMvc;
+    protected MockMvc mockMvc;
 
     // As the Web App Context is being started, mock beans are required for ALL application controllers as the whole APP Context is being started
     @MockBean
