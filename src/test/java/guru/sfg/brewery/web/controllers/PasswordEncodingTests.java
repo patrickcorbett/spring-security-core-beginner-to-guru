@@ -14,8 +14,8 @@ public class PasswordEncodingTests {
     static final String PASSWORD = "password";
 
     @Test
-    void testBcrypt15() {
-        PasswordEncoder bcrypt = new BCryptPasswordEncoder(15);
+    void testBcrypt10() {
+        PasswordEncoder bcrypt = new BCryptPasswordEncoder(10);
 
         System.out.println(bcrypt.encode(PASSWORD));
         // this hash isn't the same as the previous as a random salt is being used

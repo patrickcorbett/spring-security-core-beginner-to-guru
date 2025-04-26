@@ -1,9 +1,8 @@
 package guru.sfg.brewery.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,12 +34,30 @@ public class RestHeaderAuthFilter extends AbstractAuthenticationProcessingFilter
             this.logger.debug("Request is to process authentication");
         }
 
-        Authentication authResult = this.attemptAuthentication(request, response);
-        if (authResult != null) {
-            this.successfulAuthentication(request, response, chain, authResult);
-        } else {
-            chain.doFilter(request, response);
+        try {
+            Authentication authResult = this.attemptAuthentication(request, response);
+            if (authResult != null) {
+                this.successfulAuthentication(request, response, chain, authResult);
+            } else {
+                chain.doFilter(request, response);
+            }
+        } catch (AuthenticationException e) {
+            log.error("Authentication Failed", e);
+            unsuccessfulAuthentication(request, response, e);
         }
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        // remove all authentication from the context
+        SecurityContextHolder.clearContext();
+        if (log.isDebugEnabled()) {
+            log.debug("Authentication request failed: " + failed.toString(), failed);
+            log.debug("Updated SecurityContextHolder to contain null Authentication");
+        }
+
+        // inform the client that the request was reject due to invalid authentication
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 
     @Override
