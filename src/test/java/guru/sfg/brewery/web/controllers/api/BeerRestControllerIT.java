@@ -10,6 +10,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class BeerRestControllerIT extends BaseIT {
 
     @Test
+    void deleteBeer() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/beer/ab73d1de-cbce-4ff2-9406-eabe2cf878a9")
+                        .header("Api-Key", "spring")
+                        .header("Api-Secret", "guru"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
     void findBeers() throws Exception {
         // GET Operations should not require authentication, see the SecurityConfig
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/beer/")).andExpect(MockMvcResultMatchers.status().isOk());
