@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // The Fluent API can also be called multiple times and on a new line like this
         auth.inMemoryAuthentication()
                 .withUser("scott")
-                .password("{ldap}{SSHA}SC+Y+HKZkEundt2wThBnGWsJYCokV8rwSAT35g==") // Specify the password as the hash result of the password, our provided password will be matched to this hash
+                .password("{bcrypt15}$2a$15$Qj8cdP7lVRkJ3RQsLyn/Oumtjo1KnLmxdtN8oUvTFpeWpmgVB4zHO") // Specify the password as the hash result of the password, our provided password will be matched to this hash
                 .roles("CUSTOMER");
     }
 
