@@ -6,6 +6,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+
 @WebMvcTest
 public class BeerRestControllerIT extends BaseIT {
 
@@ -15,6 +17,19 @@ public class BeerRestControllerIT extends BaseIT {
                         .header("Api-Key", "spring")
                         .header("Api-Secret", "guru"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void deleteBeerHttpBasic() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/beer/ab73d1de-cbce-4ff2-9406-eabe2cf878a9")
+                .with(httpBasic("spring", "guru")))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    void deleteBeerNoAuth() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/beer/ab73d1de-cbce-4ff2-9406-eabe2cf878a9"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
