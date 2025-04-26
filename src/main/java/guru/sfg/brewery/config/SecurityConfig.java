@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // This allows for the definition and configuration of the InMemoryUserDetailsManager as before
         auth.inMemoryAuthentication() // returns InMemoryUserDetailsManagerConfigurer
                 .withUser("spring")
-                .password("{noop}guru") // Specify the password encoder - noop - No Operation - Plain text
+                .password("guru") // Specify the password - the encoder is not required as prefixed value as the Encoder is now defined as a bean in the spring context
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
