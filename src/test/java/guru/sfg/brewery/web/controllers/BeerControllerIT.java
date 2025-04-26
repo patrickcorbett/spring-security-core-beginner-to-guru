@@ -12,6 +12,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BeerControllerIT extends BaseIT {
 
     @Test
+    void initCreationFormWithSpring() throws Exception {
+        // the add beer button requires authentication, currently our security config requires HTTP Basic Authentication
+        // one of the new users added to the In Memory UserDetailsService is being used
+        mockMvc.perform(get("/beers/new").with(httpBasic("spring", "guru")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("beers/createBeer"))
+                .andExpect(model().attributeExists("beer"));
+    }
+
+    @Test
     void initCreationForm() throws Exception {
         // the add beer button requires authentication, currently our security config requires HTTP Basic Authentication
         // one of the new users added to the In Memory UserDetailsService is being used

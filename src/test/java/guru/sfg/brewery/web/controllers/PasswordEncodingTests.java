@@ -20,6 +20,7 @@ public class PasswordEncodingTests {
         System.out.println(bcrypt.encode(PASSWORD));
         // this hash isn't the same as the previous as a random salt is being used
         System.out.println(bcrypt.encode(PASSWORD));
+        System.out.println(bcrypt.encode("guru"));
     }
 
     @Test
@@ -40,7 +41,10 @@ public class PasswordEncodingTests {
         System.out.println(ldap.encode(PASSWORD));
         // The Salt is random but is included in the hashed result and can be extracted by the algorithm from the hashed password for use when matching
 
-        // Spring security would handle the following logid
+        System.out.println(ldap.encode("tiger"));
+
+
+        // Spring security would handle the following logic
         // 1 - the given password will be encoded
         String encodedPassword = ldap.encode(PASSWORD);
 

@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,11 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     protected PasswordEncoder passwordEncoder() {
-        // Providing a Password Encoder tell Spring security to use this Encoder.
-        // This is used instead of the Default DelegatingPasswordEncoder which is a password encoder that delegates to
-        // another PasswordEncoder based upon a prefixed identifier.
-        // we used this before like this "{noop}password" when defining the password for our in memory users.
-        return new BCryptPasswordEncoder();
+        // The default DelegatingPasswordEncoder can help when multiple encoders are being used at the same time.
+        // this can be useful for migration purposes
+        // Everything would still work even without this bean as it is the default
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override
@@ -49,17 +49,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // This allows for the definition and configuration of the InMemoryUserDetailsManager as before
         auth.inMemoryAuthentication() // returns InMemoryUserDetailsManagerConfigurer
                 .withUser("spring")
-                .password("$2a$10$yqcIzJTwCKllv1iqPl.y2O9r7hEecEG3bbhq25NWBH86E/HhkUaYO") // Specify the password as the hash result of the password, our provided password will be matched to this hash
+                .password("{bcrypt}$2a$10$kT8.UGKevbEOgFoL33tXbOytLcmqYqyaexqWG.VE4nVByXEJWmIFC") // Specify the encoder and the password as the hash result of the password, our provided password will be matched to this hash
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("$2a$10$yqcIzJTwCKllv1iqPl.y2O9r7hEecEG3bbhq25NWBH86E/HhkUaYO") // Specify the password as the hash result of the password, our provided password will be matched to this hash
+                .password("{sha256}f9b3d87c9c8fda86ef855248011babd47d01f96eb4ea5a8f371bf311c9dc941f5f5200c9b5e28ffa") // Specify the encoder and the password as the hash result of the password, our provided password will be matched to this hash
                 .roles("USER");
 
         // The Fluent API can also be called multiple times and on a new line like this
         auth.inMemoryAuthentication()
                 .withUser("scott")
-                .password("$2a$10$hHGnyUxTxQO/piKCmjf2oO0yk1CGsa7IX8vjnoIBu71.qtb0kyHLm") // Specify the password as the hash result of the password, our provided password will be matched to this hash
+                .password("{ldap}{SSHA}SC+Y+HKZkEundt2wThBnGWsJYCokV8rwSAT35g==") // Specify the password as the hash result of the password, our provided password will be matched to this hash
                 .roles("CUSTOMER");
     }
 
