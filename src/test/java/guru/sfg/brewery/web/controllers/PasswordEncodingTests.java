@@ -1,13 +1,36 @@
 package guru.sfg.brewery.web.controllers;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.DigestUtils;
 
+import static org.junit.Assert.assertTrue;
+
 public class PasswordEncodingTests {
 
     static final String PASSWORD = "password";
+
+    @Test
+    void testLdap() {
+        PasswordEncoder ldap = new LdapShaPasswordEncoder();
+        System.out.println(ldap.encode(PASSWORD));
+
+        // this hash isn't the same as the previous as a random salt is being used
+        System.out.println(ldap.encode(PASSWORD));
+        // The Salt is random but is included in the hashed result and can be extracted by the algorithm from the hashed password for use when matching
+
+        // Spring security would handle the following logid
+        // 1 - the given password will be encoded
+        String encodedPassword = ldap.encode(PASSWORD);
+
+        // 2 - Spring would call the Password enocder Matches method
+        // the previously encoded password would come some datasource, the Spring UserDetailsProvider will retrieve this
+        // the provided password will be matched against the saved hashed password,
+        Assertions.assertTrue(ldap.matches(PASSWORD, encodedPassword));
+    }
 
     @Test
     void testNoOp() {

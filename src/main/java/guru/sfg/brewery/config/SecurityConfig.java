@@ -7,21 +7,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Bean
-    protected PasswordEncoder passwordEncoder() {
-        // Providing a Password Encoder tell Spring security to use this Encoder.
-        // This is used instead of the Default DelegatingPasswordEncoder which is a password encoder that delegates to
-        // another PasswordEncoder based upon a prefixed identifier.
-        // we used this before like this "{noop}password" when defining the password for our in memory users.
-        return NoOpPasswordEncoder.getInstance();
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -40,23 +32,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
     }
 
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        // Providing a Password Encoder tell Spring security to use this Encoder.
+        // This is used instead of the Default DelegatingPasswordEncoder which is a password encoder that delegates to
+        // another PasswordEncoder based upon a prefixed identifier.
+        // we used this before like this "{noop}password" when defining the password for our in memory users.
+        return new LdapShaPasswordEncoder();
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // the AuthenticationManagerBuilder can also be used with it's Fluent API
         // This allows for the definition and configuration of the InMemoryUserDetailsManager as before
         auth.inMemoryAuthentication() // returns InMemoryUserDetailsManagerConfigurer
                 .withUser("spring")
-                .password("guru") // Specify the password - the encoder is not required as prefixed value as the Encoder is now defined as a bean in the spring context
+                .password("{SSHA}K56acRLnttCwdzUWYhXHN2HZPQ3Dogd0Dzf4yQ==") // Specify the password as the hash result of the password, our provided password will be matched to this hash
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("password") // Specify the password - the encoder is not required as prefixed value as the Encoder is now defined as a bean in the spring context
+                .password("{SSHA}K56acRLnttCwdzUWYhXHN2HZPQ3Dogd0Dzf4yQ==") // Specify the password as the hash result of the password, our provided password will be matched to this hash
                 .roles("USER");
 
         // The Fluent API can also be called multiple times and on a new line like this
         auth.inMemoryAuthentication()
                 .withUser("scott")
-                .password("tiger")  // Specify the password - the encoder is not required as prefixed value as the Encoder is now defined as a bean in the spring context
+                .password("{SSHA}7gQSG8irMoPDsrUdbwcEZmqFo1nZ0NLVrJfpVw==") // Specify the password as the hash result of the password, our provided password will be matched to this hash
                 .roles("CUSTOMER");
     }
 
