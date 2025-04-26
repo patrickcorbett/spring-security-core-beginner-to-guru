@@ -22,6 +22,16 @@ public class BeerControllerIT extends BaseIT {
     }
 
     @Test
+    void initCreationFormWithScott() throws Exception {
+        // the add beer button requires authentication, currently our security config requires HTTP Basic Authentication
+        // one of the new users added to the In Memory UserDetailsService is being used
+        mockMvc.perform(get("/beers/new").with(httpBasic("scott", "tiger")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("beers/createBeer"))
+                .andExpect(model().attributeExists("beer"));
+    }
+
+    @Test
     void findBeers() throws Exception {
         // here no authentication is being provided
         mockMvc.perform(get("/beers/find"))

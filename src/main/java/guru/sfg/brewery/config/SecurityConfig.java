@@ -45,6 +45,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("user")
                 .password("{noop}password") // Specify the password encoder - noop - No Operation - Plain text
                 .roles("USER");
+
+        // The Fluent API can also be called multiple times and on a new line like this
+        auth.inMemoryAuthentication()
+                .withUser("scott")
+                .password("{noop}tiger") // Specify the password encoder - noop - No Operation - Plain text
+                .roles("CUSTOMER");
     }
 
     /*
