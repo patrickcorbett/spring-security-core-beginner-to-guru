@@ -1,15 +1,27 @@
 package guru.sfg.brewery.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        // Providing a Password Encoder tell Spring security to use this Encoder.
+        // This is used instead of the Default DelegatingPasswordEncoder which is a password encoder that delegates to
+        // another PasswordEncoder based upon a prefixed identifier.
+        // we used this before like this "{noop}password" when defining the password for our in memory users.
+        return NoOpPasswordEncoder.getInstance();
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,13 +50,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("{noop}password") // Specify the password encoder - noop - No Operation - Plain text
+                .password("password") // Specify the password - the encoder is not required as prefixed value as the Encoder is now defined as a bean in the spring context
                 .roles("USER");
 
         // The Fluent API can also be called multiple times and on a new line like this
         auth.inMemoryAuthentication()
                 .withUser("scott")
-                .password("{noop}tiger") // Specify the password encoder - noop - No Operation - Plain text
+                .password("tiger")  // Specify the password - the encoder is not required as prefixed value as the Encoder is now defined as a bean in the spring context
                 .roles("CUSTOMER");
     }
 
