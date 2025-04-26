@@ -1,6 +1,7 @@
 package guru.sfg.brewery.config;
 
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
+import guru.sfg.brewery.security.RestUrlAuthFilter;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +25,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return filter;
     }
 
+    protected RestUrlAuthFilter restUrlAuthFilter(AuthenticationManager authenticationManager) {
+        RestUrlAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
+        filter.setAuthenticationManager(authenticationManager);
+        return filter;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Tell Spring security to use the custom Filter
         http.addFilterBefore(restHeaderAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
                 // Disable Cross Site Request Forgery Filter
                 .csrf().disable();
+
+        // Tell Spring security to use the custom Filter
+        http.addFilterBefore(restUrlAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests(authorize -> {
             // allow specific requests using path matching, these requests should be allowed without authentication
