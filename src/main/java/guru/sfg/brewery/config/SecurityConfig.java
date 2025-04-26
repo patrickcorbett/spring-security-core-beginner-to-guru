@@ -27,7 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Tell Spring security to use the custom Filter
-        http.addFilterBefore(restHeaderAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(restHeaderAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+                // Disable Cross Site Request Forgery Filter
+                .csrf().disable();
 
         http.authorizeRequests(authorize -> {
             // allow specific requests using path matching, these requests should be allowed without authentication

@@ -28,7 +28,7 @@ public class RestHeaderAuthFilter extends AbstractAuthenticationProcessingFilter
         if (userName == null) {
             userName = "";
         }
-        if (password != null) {
+        if (password == null) {
             password= "";
         }
 
