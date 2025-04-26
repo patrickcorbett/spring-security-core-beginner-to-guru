@@ -1,5 +1,6 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -7,12 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // The default DelegatingPasswordEncoder can help when multiple encoders are being used at the same time.
         // this can be useful for migration purposes
         // Everything would still work even without this bean as it is the default
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override
