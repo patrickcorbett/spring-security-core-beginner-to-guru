@@ -15,8 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-@WebMvcTest
-public class BaseIT {
+public abstract class BaseIT {
 
     // Spring security tests need Web MVC Filters to work so the web application context needs to be created
     @Autowired
