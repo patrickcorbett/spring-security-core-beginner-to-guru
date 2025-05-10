@@ -1,7 +1,6 @@
 package guru.sfg.brewery.domain.security;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -11,9 +10,17 @@ import java.util.Set;
  * {@link org.springframework.security.core.GrantedAuthority}
  * Here is the spring implementation
  * {@link org.springframework.security.core.authority.SimpleGrantedAuthority}
+ *
+ * Use Project Lombok which is an Annotation processor to add functionality to this class at compile time
  */
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 public class Authority {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
