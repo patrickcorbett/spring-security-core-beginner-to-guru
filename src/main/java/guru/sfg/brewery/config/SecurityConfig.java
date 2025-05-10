@@ -43,7 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests(authorize -> {
             // allow specific requests using path matching, these requests should be allowed without authentication
-            authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**", "/beers", "/beers/find").permitAll()
+            authorize
+                    // enable the H2 Console to be reached without authentication
+                    .antMatchers("/h2-console/**").permitAll() // Do not use in production
+                    .antMatchers("/", "/webjars/**", "/login", "/resources/**", "/beers", "/beers/find").permitAll()
                     /*
                      * "/api/v1/user/*" - will match any value, up to another "/"
                      * "/api/v1/user/**" - will match all values beginning with start of string (including if another "/" is found.
@@ -54,6 +57,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     // MVC Matchers allow the usage of path variables rather than using antMatcher and wildcards
                     .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
         }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+
+        // H2 console config
+        // the H2 Console uses Frames in the frontend frame options need to be provided
+        // Same origin allows frames as long as they load data from teh same origin (domain) as the main page.
+        http.headers().frameOptions().sameOrigin();
     }
 
     @Bean
