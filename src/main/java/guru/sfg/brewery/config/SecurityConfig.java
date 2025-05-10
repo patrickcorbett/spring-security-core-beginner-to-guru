@@ -17,45 +17,49 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    protected RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
-        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
-        filter.setAuthenticationManager(authenticationManager);
-        return filter;
-    }
-
-    protected RestUrlAuthFilter restUrlAuthFilter(AuthenticationManager authenticationManager) {
-        RestUrlAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
-        filter.setAuthenticationManager(authenticationManager);
-        return filter;
-    }
+    /* Deactivate custom filters */
+//    protected RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
+//        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
+//        filter.setAuthenticationManager(authenticationManager);
+//        return filter;
+//    }
+//
+//    protected RestUrlAuthFilter restUrlAuthFilter(AuthenticationManager authenticationManager) {
+//        RestUrlAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
+//        filter.setAuthenticationManager(authenticationManager);
+//        return filter;
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Tell Spring security to use the custom Filter
-        http.addFilterBefore(restHeaderAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                // Disable Cross Site Request Forgery Filter
-                .csrf().disable();
-
-        // Tell Spring security to use the custom Filter
-        http.addFilterBefore(restUrlAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        /* Deactivate custom filters */
+//        // Tell Spring security to use the custom Filter
+//        http.addFilterBefore(restHeaderAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+//                // Disable Cross Site Request Forgery Filter
+//                .csrf().disable();
+//
+//        // Tell Spring security to use the custom Filter
+//        http.addFilterBefore(restUrlAuthFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests(authorize -> {
-            // allow specific requests using path matching, these requests should be allowed without authentication
-            authorize
-                    // enable the H2 Console to be reached without authentication
-                    .antMatchers("/h2-console/**").permitAll() // Do not use in production
-                    .antMatchers("/", "/webjars/**", "/login", "/resources/**", "/beers", "/beers/find").permitAll()
-                    /*
-                     * "/api/v1/user/*" - will match any value, up to another "/"
-                     * "/api/v1/user/**" - will match all values beginning with start of string (including if another "/" is found.
-                     */
-                    .antMatchers("/beers*", "/beers/find").permitAll()
-                    // Limit a Path by HTTP Method and Path
-                    .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
-                    // MVC Matchers allow the usage of path variables rather than using antMatcher and wildcards
-                    .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
-        }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+                    // allow specific requests using path matching, these requests should be allowed without authentication
+                    authorize
+                            // enable the H2 Console to be reached without authentication
+                            .antMatchers("/h2-console/**").permitAll() // Do not use in production
+                            .antMatchers("/", "/webjars/**", "/login", "/resources/**", "/beers", "/beers/find").permitAll()
+                            /*
+                             * "/api/v1/user/*" - will match any value, up to another "/"
+                             * "/api/v1/user/**" - will match all values beginning with start of string (including if another "/" is found.
+                             */
+                            .antMatchers("/beers*", "/beers/find").permitAll()
+                            // Limit a Path by HTTP Method and Path
+                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
+                            // MVC Matchers allow the usage of path variables rather than using antMatcher and wildcards
+                            .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
+                }).authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic()
+                // Disable Cross Site Request Forgery Filter - previously done above with custom filter
+                .and().csrf().disable();
+        ;
 
         // H2 console config
         // the H2 Console uses Frames in the frontend frame options need to be provided
